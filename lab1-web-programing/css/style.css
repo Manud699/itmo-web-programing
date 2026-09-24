@@ -1,0 +1,48 @@
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* background-color: rgb(255, 0, 187); */
+}
+
+header {
+    font-family: serif;
+    text-align: center;
+    color: black;
+    display:grid;
+} 
+
+.header-info {
+    font-style: italic;
+} 
+
+main {
+    max-width: 800px;
+    margin: 0 auto; /* Centra el contenido en la pantalla */
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}  
+
+#table-results {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top:30px;
+}
+
+th, td {
+    border: 1px solid black;
+    text-align: center;
+    
+} 
+
+
+
+
+
+
+

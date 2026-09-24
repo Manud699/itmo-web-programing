@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+
+    <head>
+        <title>lab1-web</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Laboratorio 1 - Web</title>
+        <link href="../css/style.css" rel="stylesheet" type="text/css"/>
+        <script src="../js/Main.js"  defer></script>
+    </head>
+
+    <body>
+
+
+        <header clase="header-info">
+            <h1>Carlos Manuel Avendaño Duran</h1>
+            <p>Группа P3117</p>
+            <p>Вариант 22613</p>
+        </header>
+
+
+
+        <main>
+            <div id="canvas">
+                <canvas width="250" hight="250"></canvas>
+            </div>
+
+
+            <section class="form-section">
+                <form id="formulario">  
+                    <p>
+                        <label>Изменить X (Radio):</label><br>
+                        <label><input type="radio" name="inputX" value="-3" required> -3</label>
+                        <label><input type="radio" name="inputX" value="-2"> -2</label>
+                        <label><input type="radio" name="inputX" value="-1"> -1</label>
+                        <label><input type="radio" name="inputX" value="0"> 0</label>
+                        <label><input type="radio" name="inputX" value="1"> 1</label>
+                        <label><input type="radio" name="inputX" value="2"> 2</label>
+                        <label><input type="radio" name="inputX" value="3"> 3</label>
+                        <label><input type="radio" name="inputX" value="4"> 4</label>
+                        <label><input type="radio" name="inputX" value="5"> 5</label>
+                    </p>
+                
+
+                    <p>
+                        <label>Изменить y [-5,3]:</label> <br>
+                        <label for="inputY" >
+                            <input type="number" id="inputY" required placeholder="-5...3"></input>
+                        </label>
+                    </p>
+
+
+                    <p>
+                        <label for="">Изменить r:</label> <br>
+                        <select id="selectR">
+                            <option value="" disabled selected>Выберите вариант</option>
+                            <option value="1">1</option>s
+                            <option value="1.5">1.5</option>
+                            <option value="2">2</option>
+                            <option value="2.5">2.5</option>
+                            <option value="3">3</option>
+                        </select>
+                    </p>
+                    <button id="submit-btn" type="submit">submit</button>
+                </form>
+            </section>
+        </main>
+
+        <table id="table-results">
+            <thead>
+                <tr>
+                    <th scope="col">x</th>
+                    <th scope="col">y</th>
+                    <th scope="col">r</th>
+                    <th scope="col">time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td >12</td>
+                    <td>13</td>
+                    <td>13</td>
+                    <td>2026</td>
+                </tr>
+
+
+                <tr></tr>
+            </tbody>
+        </table>
+
+    </body>
+
+</html>
