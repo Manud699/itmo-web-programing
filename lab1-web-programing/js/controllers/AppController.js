@@ -1,4 +1,3 @@
-
 export class AppController {
 
     #validator;
@@ -25,7 +24,7 @@ export class AppController {
         const xInput = document.querySelector("input[name=inputX]:checked");
         const xRaw = xInput ? xInput.value : null; 
         const yRaw = document.getElementById("inputY").value;
-        const rRaw = document.getElementById("inputR").value;
+        const rRaw = document.getElementById("selectR").value;
 
         const validation = this.#validator.validateForm(xRaw, yRaw, rRaw); 
 

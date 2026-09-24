@@ -1,23 +1,30 @@
-import { BaseValidator } from "./BaseValidator"
-import { ResultValidation } from "./ResultValidation";
+import { BaseValidator } from "./BaseValidator.js";
+import { ResultValidation } from "./ResultValidation.js";
 
 export class OptionsValidator extends BaseValidator {
-    #allowedOptions
+    #allowedOptions;
+
     constructor(optionsArray) {
         super();
+        console.log("Creando OptionsValidator. Recibí esto:", optionsArray);
         this.#allowedOptions = optionsArray; 
     }
 
-    validate(value){
-        if (value === '' || value === null) return ResultValidation.fail('No se ha seleccionado ninguna opción.');  
-
-        const num = parseFloat(value);
-        
-        if(!this.#allowedOptions.includes(num)) {
-            return  ResultValidation.fail(`El valor ${value} no está dentro de las opciones permitidas.`);
+    validate(value) {
+        if (value === '' || value === null || value === undefined) {
+            return ResultValidation.fail('No se ha seleccionado ninguna opción.');
         }
 
-        return ResultValidation.success(); 
-    }
+        const num = parseFloat(value);
 
+        if (isNaN(num)) {
+            return ResultValidation.fail(`El valor "${value}" no es un número válido.`);
+        }
+        
+        if (!this.#allowedOptions.includes(num)) {
+            return ResultValidation.fail(`El valor ${value} no está dentro de las opciones permitidas.`);
+        }
+
+        return ResultValidation.success(num); 
+    }
 }

@@ -1,6 +1,6 @@
-import {OptionsValidator} from "./OptionsValidator";
-import {RangeValidator} from "./RangeValidator";
-import {ResultValidation} from "./ResultValidation";
+import {OptionsValidator} from "./OptionsValidator.js";
+import {RangeValidator} from "./RangeValidator.js";
+import {ResultValidation} from "./ResultValidation.js";
 
 export class ValidateForm {
 
@@ -10,9 +10,9 @@ export class ValidateForm {
 
     
     constructor(xValidator, yValidator, rValidator){
-        this.#xValidator = new OptionsValidator([-3, -2, -1, 0, 1, 2, 3, 4, 5]); 
-        this.#yValidator = new RangeValidator([-5, 3]); 
-        this.#rValidator = new OptionsValidator([1, 1.5, 2, 2.5, 3]);
+        this.#xValidator = xValidator; 
+        this.#yValidator = yValidator; 
+        this.#rValidator = rValidator;
     }
 
 
