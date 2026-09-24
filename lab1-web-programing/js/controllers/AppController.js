@@ -82,13 +82,15 @@ export class AppController {
     #addPointToTable(pointData) {
         const tbody = document.querySelector('#table-results tbody');
         const row = document.createElement('tr');
-        const timestamp = this.#getFormattedDate(); 
+        const timestamp = this.#getFormattedDate();
+    
         row.innerHTML = `
-        ${pointData.x}
-        ${pointData.y}
-        ${pointData.r}
-        ${pointData.timestamp}
-        ${pointData.isHit ? 'Попадание' : 'Промах'}`;
+                    <td>${pointData.x}</td>
+                    <td>${pointData.y}</td>
+                    <td>${pointData.r}</td>
+                    <td>${pointData.timestamp}</td>
+                    <td>${pointData.isHit ? 'Попадание' : 'Промах'}</td>
+                `;
         tbody.appendChild(row);
     }
 
