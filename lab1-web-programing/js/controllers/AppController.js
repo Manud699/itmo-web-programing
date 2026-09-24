@@ -1,9 +1,7 @@
 export class AppController {
-
     #validator;
     #localStoredRep; 
-    #CoordinatePlaneRenderer
-
+    #CoordinatePlaneRenderer;
 
     constructor(validator, localStoredRep, CoordinatePlaneRenderer) {
         this.#validator = validator; 
@@ -11,15 +9,22 @@ export class AppController {
         this.#CoordinatePlaneRenderer = CoordinatePlaneRenderer; 
     }
 
-
-    setupEventListeners(){
+    setupEventListeners() {
         const formEl = document.getElementById("formulario");
+        const rSelectEl = document.getElementById("selectR");
+
         formEl.addEventListener("submit", (e) => this.#handleFormSubmit(e));
+        rSelectEl.addEventListener("change", (e) => {
+            const currentR = parseFloat(e.target.value);
+            if (!isNaN(currentR)) {
+                this.#refreshCanvas(currentR);
+            }
+        });
+
         this.#loadInitialData();
     }
 
-
-    #handleFormSubmit(event){
+    #handleFormSubmit(event) {
         event.preventDefault(); 
         const xInput = document.querySelector("input[name=inputX]:checked");
         const xRaw = xInput ? xInput.value : null; 
@@ -28,28 +33,34 @@ export class AppController {
 
         const validation = this.#validator.validateForm(xRaw, yRaw, rRaw); 
 
-        if(!validation.isValid) {
+        if (!validation.isValid) {
             console.error("Error de validación:", validation.message);
             return; 
         }
 
-        const {x,y,r} = validation.data; 
+        const { x, y, r } = validation.data; 
         const isHit = this.#calculateHit(x, y, r);
 
         const timestamp = this.#getFormattedDate();
         const pointData = { x, y, r, isHit, timestamp };
-
+        
         this.#localStoredRep.savePoint(pointData);
         this.#addPointToTable(pointData);
 
-        this.#CoordinatePlaneRenderer.drawPoint(x, y, r, isHit);
+        this.#refreshCanvas(r);
     }
 
+    #refreshCanvas(r) {
+        this.#CoordinatePlaneRenderer.drawBaseGraph(r);
+        const points = this.#localStoredRep.getAllPoints();
+        points.forEach(point => {
+            this.#CoordinatePlaneRenderer.drawPoint(point.x, point.y, point.r, point.isHit);
+        });
+    }
 
     #getFormattedDate() {
         const now = new Date();
         const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
         const formatter = new Intl.DateTimeFormat('ru-RU', {
             year: 'numeric',
             month: 'numeric',
@@ -62,12 +73,11 @@ export class AppController {
         return formatter.format(now);
     }
 
-
     #calculateHit(x, y, r) {
         if (x >= 0 && y >= 0) {
             return (x + 2 * y) <= r;
         }
-    
+        
         if (x <= 0 && y >= 0) {
             return x >= -r && y <= r / 2;
         }
@@ -78,28 +88,25 @@ export class AppController {
         return false;
     }
 
-
     #addPointToTable(pointData) {
         const tbody = document.querySelector('#table-results tbody');
         const row = document.createElement('tr');
-        const timestamp = this.#getFormattedDate();
     
         row.innerHTML = `
-                    <td>${pointData.x}</td>
-                    <td>${pointData.y}</td>
-                    <td>${pointData.r}</td>
-                    <td>${pointData.timestamp}</td>
-                    <td>${pointData.isHit ? 'Попадание' : 'Промах'}</td>
-                `;
+            <td>${pointData.x}</td>
+            <td>${pointData.y}</td>
+            <td>${pointData.r}</td>
+            <td>${pointData.timestamp}</td>
+            <td>${pointData.isHit ? 'Попадание' : 'Промах'}
+            `;
         tbody.appendChild(row);
     }
 
-
     #loadInitialData() {
-    const points = this.#localStoredRep.getAllPoints();
-    points.forEach(point => {
-        this.#addPointToTable(point);
-        this.#CoordinatePlaneRenderer.drawPoint(point.x, point.y, point.r, point.isHit);
+        const points = this.#localStoredRep.getAllPoints();        
+        points.forEach(point => {
+            this.#addPointToTable(point);
         });
+        this.#refreshCanvas(null);
     }
 }
