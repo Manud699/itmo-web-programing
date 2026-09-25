@@ -8,7 +8,7 @@ export class ValidateForm {
     #yValidator; 
     #rValidator; 
 
-    
+
     constructor(xValidator, yValidator, rValidator){
         this.#xValidator = xValidator; 
         this.#yValidator = yValidator; 

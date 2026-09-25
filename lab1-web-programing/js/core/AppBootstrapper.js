@@ -3,14 +3,14 @@ import { OptionsValidator } from '../validators/OptionsValidator.js';
 import { RangeValidator } from '../validators/RangeValidator.js';
 import { LocalStorageRep } from '../repository/LocalStorageRep.js';
 import { CoordinatePlaneRenderer } from '../draw/CoordinatePlaneRenderer.js';
-import { AppController } from './AppController.js';
+import { FormRendererFacade } from '../facade/FormRendererFacade.js';
 
 export class AppBootstrapper {
     constructor() {
         this.validator = null;
         this.repository = null;
         this.coordinatePlaneRenderer = null;
-        this.controller = null;
+        this.formRendererFacade = null;
     }
 
     boot(){
@@ -41,11 +41,11 @@ export class AppBootstrapper {
     }
 
     initControllers() {
-        this.controller = new AppController(
+        this.formRendererFacade = new FormRendererFacade(
             this.validator,
             this.repository,
             this.coordinatePlaneRenderer
         );
-        this.controller.setupEventListeners();
+        this.formRendererFacade.setupEventListeners();
     }
 }

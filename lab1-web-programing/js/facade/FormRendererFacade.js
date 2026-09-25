@@ -1,4 +1,4 @@
-export class AppController {
+export class FormRendererFacade {
     #validator;
     #localStoredRep; 
     #CoordinatePlaneRenderer;
@@ -12,7 +12,9 @@ export class AppController {
     setupEventListeners() {
         const formEl = document.getElementById("formulario");
         const rSelectEl = document.getElementById("selectR");
+        const clearBtn = document.getElementById("clear-btn");
 
+        clearBtn?.addEventListener("click", () => this.#handleClearHistory());
         formEl.addEventListener("submit", (e) => this.#handleFormSubmit(e));
         rSelectEl.addEventListener("change", (e) => {
             const currentR = parseFloat(e.target.value);
@@ -109,4 +111,21 @@ export class AppController {
         });
         this.#refreshCanvas(null);
     }
+
+
+    #handleClearHistory() {
+        this.#localStoredRep.clear(); 
+        const tbody = document.querySelector('#table-results tbody');
+        if (tbody) {
+            tbody.replaceChildren();
+        }
+
+        const rRaw = document.getElementById("selectR").value;
+        const currentR = parseFloat(rRaw);
+        const rValue = isNaN(currentR) ? null : currentR;
+
+        this.#CoordinatePlaneRenderer.drawBaseGraph(rValue);
+    } 
+
+
 }

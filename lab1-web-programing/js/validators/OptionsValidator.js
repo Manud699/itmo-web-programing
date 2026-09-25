@@ -6,7 +6,6 @@ export class OptionsValidator extends BaseValidator {
 
     constructor(optionsArray) {
         super();
-        console.log("Creando OptionsValidator. Recibí esto:", optionsArray);
         this.#allowedOptions = optionsArray; 
     }
 
