@@ -1,25 +1,29 @@
 export class ResultValidation {
     #isValid; 
-    #message; 
+    #payload; 
 
-    constructor(isValid, inputData = '') {
+    constructor(isValid, payload = null) {
         this.#isValid = Boolean(isValid);
-        this.#message = String(inputData); 
+        this.#payload = payload; 
     }
 
     get isValid() {
         return this.#isValid; 
     }
 
-    get message() {
-        return this.#message; 
+    get data() {
+        return this.#isValid ? this.#payload : null; 
     }
 
-    static success(message = 'OK') {
-        return new ResultValidation(true, message);
+    get errors() {
+        return !this.#isValid ? this.#payload : {}; 
     }
 
-    static fail(message = 'Validation error') {
-        return new ResultValidation(false, message);
+    static success(dataObject) {
+        return new ResultValidation(true, dataObject);
+    }
+
+    static fail(errorObject) {
+        return new ResultValidation(false, errorObject);
     }
 }

@@ -11,17 +11,17 @@ export class OptionsValidator extends BaseValidator {
 
     validate(value) {
         if (value === '' || value === null || value === undefined) {
-            return ResultValidation.fail('No se ha seleccionado ninguna opción.');
+            return ResultValidation.fail('Missing required parameter: a selection must be made.');
         }
 
         const num = parseFloat(value);
 
         if (isNaN(num)) {
-            return ResultValidation.fail(`El valor "${value}" no es un número válido.`);
+            return ResultValidation.fail(`Invalid type: provided value ${value} is not a valid number.`);
         }
         
         if (!this.#allowedOptions.includes(num)) {
-            return ResultValidation.fail(`El valor ${value} no está dentro de las opciones permitidas.`);
+            return ResultValidation.fail(`Invalid selection: value ${value} is strictly not among the allowed options [${this.#allowedOptions.join(', ')}].`);
         }
 
         return ResultValidation.success(num); 

@@ -1,48 +1,126 @@
-
-*, *::before, *::after {
-    box-sizing: border-box;
+/* 1. Herencia y Cascada */
+body {
+    font-family: sans-serif; /* Se hereda a los demás elementos por defecto */
+    background-color: #f4f4f9;
+    color: #333;
     margin: 0;
     padding: 0;
 }
 
-body {
-    /* background-color: rgb(255, 0, 187); */
-}
-
-header {
-    font-family: serif;
-    text-align: center;
-    color: black;
-    display:grid;
-} 
-
+/* 2. Selector de Clase + Requisitos estrictos de cabecera */
 .header-info {
-    font-style: italic;
-} 
-
-main {
-    max-width: 800px;
-    margin: 0 auto; /* Centra el contenido en la pantalla */
-    background: white;
+    font-family: serif; /* Fuente explícita requerida por el laboratorio */
+    font-size: 24px;    /* Tamaño explícito */
+    color: #1a252f;     /* Color explícito */
+    text-align: center;
+    background-color: #ffffff;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}  
-
-#table-results {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top:30px;
+    border-bottom: 3px solid #3498db;
+    display: block;     /* Diseño de bloques */
 }
 
-th, td {
-    border: 1px solid black;
+/* Diseño de bloques general */
+main {
+    display: block;
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     text-align: center;
-    
+}
+
+/* 3. Selector de Descendencia */
+main .form-section {
+    display: block;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ecf0f1;
+    text-align: left;
+}
+
+/* 4. Selector de Atributo + Márgenes porcentuales */
+input[type="radio"] {
+    margin: 1%; /* Odstupy (márgenes) en porcentaje obligatorios */
+    cursor: pointer;
+}
+
+input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 2% 0; /* Márgenes en porcentaje obligatorios */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 5. Selector de Pseudo-elemento */
+input[type="number"]::placeholder {
+    color: #bdc3c7;
+    font-style: italic;
+}
+
+button[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 3%; /* Márgenes en porcentaje obligatorios */
+    width: 100%;
+    display: block;
+    font-weight: bold;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+/* Estilos de la tabla de resultados */
+#table-results {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#table-results th, #table-results td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+#table-results th {
+    background-color: #2c3e50;
+    color: white;
+}
+
+
+.required {
+    color: red;
 } 
 
 
 
+/* Oculta los contenedores de error por defecto */
+.hidden {
+    display: none !important;
+}
 
+/* Da estilo a los mensajes de error */
+.error {
+    color: #cf222e; /* Rojo de error */
+    font-size: 12px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Separa el SVG del texto */
+}
 
-
-
+/* El SVG heredará el color rojo automáticamente */
+.icon-alert {
+    fill: currentColor;
+}

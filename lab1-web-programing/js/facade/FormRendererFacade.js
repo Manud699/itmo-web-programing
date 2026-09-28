@@ -14,6 +14,7 @@ export class FormRendererFacade {
         const rSelectEl = document.getElementById("selectR");
         const clearBtn = document.getElementById("clear-btn");
 
+
         clearBtn?.addEventListener("click", () => this.#handleClearHistory());
         formEl.addEventListener("submit", (e) => this.#handleFormSubmit(e));
         rSelectEl.addEventListener("change", (e) => {
@@ -28,6 +29,7 @@ export class FormRendererFacade {
 
     #handleFormSubmit(event) {
         event.preventDefault(); 
+        this.#clearErrors();
         const xInput = document.querySelector("input[name=inputX]:checked");
         const xRaw = xInput ? xInput.value : null; 
         const yRaw = document.getElementById("inputY").value;
@@ -36,8 +38,10 @@ export class FormRendererFacade {
         const validation = this.#validator.validateForm(xRaw, yRaw, rRaw); 
 
         if (!validation.isValid) {
-            console.error("Error de validación:", validation.message);
-            return; 
+            if (validation.errors.x) this.#showError('x', validation.errors.x);
+            if (validation.errors.y) this.#showError('y', validation.errors.y);
+            if (validation.errors.r) this.#showError('r', validation.errors.r);
+            return;
         }
 
         const { x, y, r } = validation.data; 
@@ -51,6 +55,31 @@ export class FormRendererFacade {
 
         this.#refreshCanvas(r);
     }
+
+
+    #showError(field, message) {
+        const errorContainer = document.getElementById(`input-check-${field}`); 
+        const textSpan = errorContainer.querySelector('.msg-content');
+        
+        if (textSpan) {
+            textSpan.textContent = message; 
+        }
+        
+        if (errorContainer) {
+            errorContainer.classList.remove('hidden');
+        }
+    }
+
+
+    #clearErrors() {
+        ['x', 'y', 'r'].forEach(field => {
+            const errorContainer = document.getElementById(`input-check-${field}`);
+            if (errorContainer && !errorContainer.classList.contains('hidden')) {
+                errorContainer.classList.add('hidden');
+            }
+        });
+    }
+
 
     #refreshCanvas(r) {
         this.#CoordinatePlaneRenderer.drawBaseGraph(r);
@@ -119,13 +148,10 @@ export class FormRendererFacade {
         if (tbody) {
             tbody.replaceChildren();
         }
-
         const rRaw = document.getElementById("selectR").value;
         const currentR = parseFloat(rRaw);
         const rValue = isNaN(currentR) ? null : currentR;
 
         this.#CoordinatePlaneRenderer.drawBaseGraph(rValue);
     } 
-
-
 }

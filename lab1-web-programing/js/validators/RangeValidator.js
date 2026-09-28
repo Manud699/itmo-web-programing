@@ -13,18 +13,18 @@ export class RangeValidator extends BaseValidator {
 
     validate(value) {
         if (value === '' || value === null || value === undefined) {
-            return ResultValidation.fail('No se ha proporcionado ningún valor en Y.');
+            return ResultValidation.fail('Missing required parameter: value cannot be empty or null.');
         }
 
         const normalizedValue = String(value).replace(",", "."); 
         const num = parseFloat(normalizedValue); 
 
         if (isNaN(num)) {
-            return ResultValidation.fail(`El valor provisto no es un número válido.`);
+            return ResultValidation.fail('Invalid type: provided value must be a valid numeric format.');
         }
 
         if (num < this.#min || num > this.#max) {
-            return ResultValidation.fail(`El valor ${num} está fuera del límite (${this.#min}, ${this.#max}).`);
+            return ResultValidation.fail(`Value out of range: (${num} is strictly restricted to )[${this.#min}, ${this.#max}].`);
         }
         
         return ResultValidation.success(num); 
