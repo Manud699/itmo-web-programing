@@ -1,4 +1,3 @@
-
 export class LocalStorageRep {
 
     #storageKey; 
@@ -7,16 +6,19 @@ export class LocalStorageRep {
         this.#storageKey = storageKey; 
     }
 
-    getAllPoints(){
-        const data = localStorage.getItem(this.#storageKey);
-        return data ? JSON.parse(data) : []; 
+    load() {
+        try {
+            const data = localStorage.getItem(this.#storageKey); 
+            return data ? JSON.parse(data) : null;
+
+        } catch (error) {
+            return null; 
+        }
     }
 
-    savePoint(pointData){
-        const currentPoints = this.getAllPoints();
-        currentPoints.push(pointData);
-        localStorage.setItem(this.#storageKey, JSON.stringify(currentPoints)); 
-    }
+    save(obj) {
+        localStorage.setItem(this.#storageKey, JSON.stringify(obj));
+    }   
 
     clear(){
         localStorage.removeItem(this.#storageKey);
