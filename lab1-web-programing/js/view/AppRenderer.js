@@ -15,13 +15,13 @@ export class AppRenderer{
 
     render(state){
         this.#renderForm(state.form);
-        this.#renderResults(state.state.points);
+        this.#renderResults(state.points);
         this.#renderCanvas(state.form.r, state.points);
     } 
 
     #renderForm({x, y, r}){
-        document.querySelector('input[name=inputX]')
-            .foreach(el => { el.cheked = Number(el.value) === x; });
+        document.querySelectorAll('input[name=inputX]')
+            .forEach(el => { el.checked = Number(el.value) === x; });
         document.getElementById('inputY').value = y; 
         document.getElementById('selectR').value = r ?? ''; 
     }
@@ -35,7 +35,7 @@ export class AppRenderer{
 
     #renderCanvas(r,points){
         this.#plane.drawBaseGraph(r);
-        points.forEach(p => this.#plane.drawPoint(p.X, p.y, p.isHit))
+        points.forEach(p => this.#plane.drawPoint(p.x, p.y, p.isHit))
     }
 
     renderLog(Entries, onRestore){
@@ -62,7 +62,7 @@ export class AppRenderer{
 
     #row(cells) {
         const tr = document.createElement('tr');
-        cells.foreach(text => {
+        cells.forEach(text => {
             const td = document.createElement('td');
             td.textContent = text; 
             tr.append(td)

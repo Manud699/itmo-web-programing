@@ -4,13 +4,13 @@ export class Observable {
 
     #listeners = new Set(); 
 
-    suscribe(listener){
+    subscribe(listener){
         this.#listeners.add(listener);
         return () => this.#listeners.delete(listener);
     }
 
     notify(payload){
-        this.#listeners.forEach(payload);
+        this.#listeners.forEach(listener => listener(payload));
     }
 
 } 

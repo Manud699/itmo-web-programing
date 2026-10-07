@@ -255,3 +255,6 @@ button[type="submit"]:active {
         border-bottom: 1px solid var(--border-color);
     } 
 }
+/* Registro de acciones */
+#table-log tr.current { background: #1f6feb33; font-weight: bold; }
+#table-log tr.pending { opacity: .45; }

@@ -1,7 +1,7 @@
 // Unica fuente de la 'verdad'
 
-import { Observable } from "./Observable";
-import { takeSnapshot } from "./snapshot";
+import { Observable } from "./Observable.js";
+import { takeSnapshot } from "./snapshot.js";
 
 
 export function createInitialsState() {
@@ -37,7 +37,7 @@ export class AppStore extends Observable {
     clearPoints(){
         const old = this.#state.points.length;
         this.#state.points = []; 
-        this.notify(this.getState);
+        this.notify(this.getState());
         return old; 
     } 
 
@@ -47,7 +47,7 @@ export class AppStore extends Observable {
 
     restoreMemento(memento){
         this.#state = structuredClone(memento);
-        this.notify(this.#state);
+        this.notify(this.getState());
     }
 
     #set(field, value){

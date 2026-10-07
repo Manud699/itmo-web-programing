@@ -1,5 +1,5 @@
-import { Observable } from "./Observable";
-import { deepFreeze } from "./snapshot";
+import { Observable } from "./Observable.js";
+import { deepFreeze } from "./snapshot.js";
 
 export class History extends Observable {
     #entries = [];
@@ -8,10 +8,10 @@ export class History extends Observable {
     #nextId = 1;
 
 
-    record(type, newValue, oldValue, memento){
+    record(type, oldValue, newValue, memento){
         this.#entries =this.#entries.filter(e => !this.#pendingIds.has(e.id));
         this.#pendingIds.clear();  
-        this.#push(type, newValue, oldValue, memento)
+        this.#push(type, oldValue, newValue, memento)
     }
 
 
@@ -24,6 +24,11 @@ export class History extends Observable {
         );
 
         this.#push('RESTORE', this.#currentId, id, target.memento);
+        return target.memento;
+    }
+
+    current() {
+        return this.#entries.find(e => e.id === this.#currentId) ?? null;
     }
 
 
@@ -53,7 +58,7 @@ export class History extends Observable {
         this.#entries = data.entries.map(e => ({...e, memento:deepFreeze(e.memento)}));
         this.#currentId = data.currentId; 
         this.#pendingIds = new Set(data.pendingIds); 
-        this.#nextId = data.newId; 
+        this.#nextId = data.nextId; 
         this.notify(this.getView())
     }
 

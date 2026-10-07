@@ -39,7 +39,7 @@ export class CoordinatePlaneRenderer {
         this.#drawAxes(rValue);
     }
 
-    drawPoint(x, y, r, isHit) {
+    drawPoint(x, y, isHit) {
         const pixelX = this.#centerX + (x * this.#scale);
         const pixelY = this.#centerY - (y * this.#scale); 
 

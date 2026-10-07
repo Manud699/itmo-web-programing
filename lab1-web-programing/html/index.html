@@ -50,7 +50,7 @@
 
                             <div id="input-y">
                                 <label for="inputY">Change y*</label><br>
-                                    <input type="number" min="-5" max="3" id="inputY" name="y" step="any" ran placeholder="-5...3"></input>
+                                    <input type="text" id="inputY" name="y" placeholder="-5...3">
                                     <div id="input-check-y" class="error hidden">
                                         <p class="error-text-y">
                                             <svg class="icon-alert" data-component="Octicon" height="12" viewBox="0 0 12 12" version="1.1" width="12" data-view-component="true">
@@ -129,6 +129,21 @@
                             </span>
                     </button>
                 </div>
+
+                <table id="table-log">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Acción</th>
+                            <th scope="col">Antes</th>
+                            <th scope="col">Después</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
             
             <div id="right-panel">
