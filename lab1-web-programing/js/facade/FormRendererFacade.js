@@ -1,61 +1,90 @@
-export class FormRendererFacade {
-    #validator;
-    #localStoredRep; 
-    #CoordinatePlaneRenderer;
+import { calculateHit } from '../core/geometry.js';
 
-    constructor(validator, localStoredRep, CoordinatePlaneRenderer) {
-        this.#validator = validator; 
-        this.#localStoredRep = localStoredRep; 
-        this.#CoordinatePlaneRenderer = CoordinatePlaneRenderer; 
+export class FormRendererFacade {
+    #store;
+    #history;
+    #formValidator;   
+    #fieldValidators; 
+    #invalidFields = new Set(); 
+
+    constructor(store, history, formValidator, fieldValidators) {
+        this.#store = store;
+        this.#history = history;
+        this.#formValidator = formValidator;
+        this.#fieldValidators = fieldValidators;
     }
 
     setupEventListeners() {
-        const formEl = document.getElementById("formulario");
-        const rSelectEl = document.getElementById("selectR");
-        const clearBtn = document.getElementById("clear-btn");
+        document.querySelectorAll('input[name=inputX]').forEach(el =>
+            el.addEventListener('change', e => this.#handleFieldChange('x', e.target.value)));
+        document.getElementById('inputY')
+            .addEventListener('change', e => this.#handleFieldChange('y', e.target.value));
+        document.getElementById('selectR')
+            .addEventListener('change', e => this.#handleFieldChange('r', e.target.value));
 
+        document.getElementById('formulario')
+            .addEventListener('submit', e => this.#handleFormSubmit(e));
+        document.getElementById('clear-btn')
+            ?.addEventListener('click', () => this.#handleClear());
 
-        clearBtn?.addEventListener("click", () => this.#handleClearHistory());
-        formEl.addEventListener("submit", (e) => this.#handleFormSubmit(e));
-        rSelectEl.addEventListener("change", (e) => {
-            const currentR = parseFloat(e.target.value);
-            if (!isNaN(currentR)) {
-                this.#refreshCanvas(currentR);
-            }
-        });
+        //document.addEventListener('keydown', e => { ... this.restore(id) ... });
+    }
 
-        this.#loadInitialData();
+    restore(id) {
+        const memento = this.#history.restore(id);
+        if (!memento) return;
+        this.#invalidFields.clear();              
+        ['x', 'y', 'r'].forEach(f => this.#clearError(f));
+        this.#store.restoreMemento(memento);
+    }
+
+    #handleFieldChange(field, raw) {
+        this.#clearError(field);
+        const result = this.#fieldValidators[field].validate(raw);
+        if (!result.isValid) {
+            this.#showError(field, result.errors);
+            this.#invalidFields.add(field);
+            return;                               
+        }
+        this.#invalidFields.delete(field);
+        
+        const value = field === 'y' ? String(raw).trim() : result.data;
+        const current = this.#store.getState().form[field];
+        if (current === value) return;            
+
+        const setter = { x: 'setX', y: 'setY', r: 'setR' }[field];
+        const old = this.#store[setter](value);
+        this.#history.record(`CHANGE_${field.toUpperCase()}`, old, value,
+                            this.#store.createMemento());
     }
 
     #handleFormSubmit(event) {
-        event.preventDefault(); 
-        this.#clearErrors();
-        const xInput = document.querySelector("input[name=inputX]:checked");
-        const xRaw = xInput ? xInput.value : null; 
-        const yRaw = document.getElementById("inputY").value;
-        const rRaw = document.getElementById("selectR").value;
+        event.preventDefault();
 
-        const validation = this.#validator.validateForm(xRaw, yRaw, rRaw); 
+        if (this.#invalidFields.size > 0) return;
+        ['x', 'y', 'r'].forEach(f => this.#clearError(f));
 
+        const { form } = this.#store.getState();
+        const validation = this.#formValidator.validateForm(form.x, form.y, form.r);
         if (!validation.isValid) {
-            if (validation.errors.x) this.#showError('x', validation.errors.x);
-            if (validation.errors.y) this.#showError('y', validation.errors.y);
-            if (validation.errors.r) this.#showError('r', validation.errors.r);
+            Object.entries(validation.errors).forEach(([f, msg]) => this.#showError(f, msg));
             return;
         }
 
-        const { x, y, r } = validation.data; 
-        const isHit = this.#calculateHit(x, y, r);
-
-        const timestamp = this.#getFormattedDate();
-        const pointData = { x, y, r, isHit, timestamp };
-        
-        this.#localStoredRep.savePoint(pointData);
-        this.#addPointToTable(pointData);
-
-        this.#refreshCanvas(r);
+        const { x, y, r } = validation.data;
+        const point = { x, y, r, isHit: calculateHit(x, y, r), time: Date.now() };
+        this.#store.addPoint(point);
+        this.#history.record('ADD_POINT', null, point, this.#store.createMemento());
     }
 
+    #handleClear() {
+        const old = this.#store.clearPoints();
+        this.#history.record('CLEAR_POINTS', old, 0, this.#store.createMemento());
+    }
+
+    #clearError(field) {
+        document.getElementById(`input-check-${field}`)?.classList.add('hidden');
+    }
 
     #showError(field, message) {
         const errorContainer = document.getElementById(`input-check-${field}`); 
@@ -69,95 +98,4 @@ export class FormRendererFacade {
             errorContainer.classList.remove('hidden');
         }
     }
-
-
-    #clearErrors() {
-        ['x', 'y', 'r'].forEach(field => {
-            const errorContainer = document.getElementById(`input-check-${field}`);
-            if (errorContainer && !errorContainer.classList.contains('hidden')) {
-                errorContainer.classList.add('hidden');
-            }
-        });
-    }
-
-
-    #refreshCanvas(r) {
-        this.#CoordinatePlaneRenderer.drawBaseGraph(r);
-        const points = this.#localStoredRep.getAllPoints();
-        
-        points.forEach(point => {
-
-            const currentIsHit = (r !== null && !isNaN(r)) 
-                ? this.#calculateHit(point.x, point.y, r) 
-                : point.isHit;
-
-            this.#CoordinatePlaneRenderer.drawPoint(point.x, point.y, point.r, currentIsHit);
-        });
-    }
-
-    #getFormattedDate() {
-        const now = new Date();
-        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const formatter = new Intl.DateTimeFormat('ru-RU', {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZone: userTimeZone
-        });        
-        return formatter.format(now);
-    }
-
-    #calculateHit(x, y, r) {
-        if (x >= 0 && y >= 0) {
-            return (x + 2 * y) <= r;
-        }
-        
-        if (x <= 0 && y >= 0) {
-            return x >= -r && y <= r / 2;
-        }
-        
-        if (x <= 0 && y <= 0) {
-            return (x * x + y * y) <= (r / 2) * (r / 2);
-        }
-        return false;
-    }
-
-    #addPointToTable(pointData) {
-        const tbody = document.querySelector('#table-results tbody');
-        const row = document.createElement('tr');
-    
-        row.innerHTML = `
-            <td>${pointData.x}</td>
-            <td>${pointData.y}</td>
-            <td>${pointData.r}</td>
-            <td>${pointData.timestamp}</td>
-            <td>${pointData.isHit ? 'Hit' : 'Miss'}
-            `;
-        tbody.appendChild(row);
-    }
-
-    #loadInitialData() {
-        const points = this.#localStoredRep.getAllPoints();        
-        points.forEach(point => {
-            this.#addPointToTable(point);
-        });
-        this.#refreshCanvas(null);
-    }
-
-
-    #handleClearHistory() {
-        this.#localStoredRep.clear(); 
-        const tbody = document.querySelector('#table-results tbody');
-        if (tbody) {
-            tbody.replaceChildren();
-        }
-        const rRaw = document.getElementById("selectR").value;
-        const currentR = parseFloat(rRaw);
-        const rValue = isNaN(currentR) ? null : currentR;
-
-        this.#CoordinatePlaneRenderer.drawBaseGraph(rValue);
-    } 
 }
