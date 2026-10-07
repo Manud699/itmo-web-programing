@@ -1,3 +1,4 @@
+import { calculateHit } from '../core/geometry.js';
 
 const timeFormatter = new Intl.DateTimeFormat('ru-RU',{
     year:'numeric', month:'numeric', day:'numeric',
@@ -35,7 +36,10 @@ export class AppRenderer{
 
     #renderCanvas(r,points){
         this.#plane.drawBaseGraph(r);
-        points.forEach(p => this.#plane.drawPoint(p.x, p.y, p.isHit))
+        points.forEach(p => {
+            const isHit = r ? calculateHit(p.x, p.y, r) : p.isHit;
+            this.#plane.drawPoint(p.x, p.y, isHit);
+        });
     }
 
     renderLog(Entries, onRestore){
@@ -50,7 +54,7 @@ export class AppRenderer{
 
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.textContent = 'Restaurar';
+            btn.textContent = 'Restore';
             btn.disabled = e.isCurrent;
             btn.addEventListener('click', () => onRestore(e.id));
             const td = document.createElement('td');

@@ -1,4 +1,4 @@
-// Unica fuente de la 'verdad'
+// Single source of truth
 
 import { Observable } from "./Observable.js";
 import { takeSnapshot } from "./snapshot.js";
