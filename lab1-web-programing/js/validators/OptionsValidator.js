@@ -14,6 +14,12 @@ export class OptionsValidator extends BaseValidator {
             return ResultValidation.fail('Missing required parameter: a selection must be made.');
         }
 
+        const normalizedValue = String(value).trim();
+        const formatRegex = /^-?\d+(\.\d{1,10})?$/;
+        if (!formatRegex.test(normalizedValue)) {
+            return ResultValidation.fail(`Invalid format: provided value ${value} is manipulated or has excessive decimals.`);
+        }
+
         const num = parseFloat(value);
 
         if (isNaN(num)) {

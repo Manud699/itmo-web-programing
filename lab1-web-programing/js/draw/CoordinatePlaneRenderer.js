@@ -44,7 +44,7 @@ export class CoordinatePlaneRenderer {
         const pixelY = this.#centerY - (y * this.#scale); 
 
         this.#ctx.beginPath();
-        this.#ctx.arc(pixelX, pixelY, 4, 0, Math.PI * 2);
+        this.#ctx.arc(pixelX, pixelY, 1.5, 0, Math.PI * 2);
         this.#ctx.fillStyle = isHit ? '#00FF00' : '#FF0000'; 
         this.#ctx.fill();
         this.#ctx.closePath();
@@ -70,8 +70,8 @@ export class CoordinatePlaneRenderer {
     }
 
     #drawAxes(r) {
-        this.#ctx.strokeStyle = '#000000';
-        this.#ctx.fillStyle = '#000000';
+        this.#ctx.strokeStyle = '#c9d1d9';
+        this.#ctx.fillStyle = '#c9d1d9';
         this.#ctx.lineWidth = 1;
         
         this.#ctx.beginPath();

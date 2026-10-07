@@ -14,8 +14,8 @@
     <body>
         <header class="header-info">
             <h1>Carlos Manuel Avendaño Duran</h1>
-            <p>Группа P3117</p>
-            <p>Вариант 22613</p>
+            <p>Group P3117</p>
+            <p>Variant 22613</p>
         </header>
 
     
@@ -25,7 +25,7 @@
                     <form id="formulario">  
                         <div id="input-data">
                             <div id="input-x">
-                                <p class="label-title">Изменить X*</p>
+                                <p class="label-title">Change x*</p>
                                 <label><input type="radio" name="inputX" value="-3"> -3</label>
                                 <label><input type="radio" name="inputX" value="-2"> -2</label>
                                 <label><input type="radio" name="inputX" value="-1"> -1</label>
@@ -49,8 +49,8 @@
                             </div>
 
                             <div id="input-y">
-                                <label for="inputY">Изменить Y*</label><br>
-                                    <input type="number" id="inputY"  placeholder="-5...3"></input>
+                                <label for="inputY">Change y*</label><br>
+                                    <input type="number" min="-5" max="3" id="inputY" name="y" step="any" ran placeholder="-5...3"></input>
                                     <div id="input-check-y" class="error hidden">
                                         <p class="error-text-y">
                                             <svg class="icon-alert" data-component="Octicon" height="12" viewBox="0 0 12 12" version="1.1" width="12" data-view-component="true">
@@ -65,7 +65,7 @@
 
 
                             <div id="input-r">
-                                <label for="">Изменить r</label> <br>
+                                <label for="">Change r*</label> <br>
                                 <select id="selectR">
                                     <option value="" disabled selected>Выберите вариант</option>
                                     <option value="1">1</option>s
@@ -106,11 +106,11 @@
                 <table id="table-results">
                     <thead>
                         <tr>
-                            <th scope="col">x</th>
-                            <th scope="col">y</th>
-                            <th scope="col">r</th>
-                            <th scope="col">time</th>
-                            <th scope="col">asser</th>
+                            <th scope="col">X</th>
+                            <th scope="col">Y</th>
+                            <th scope="col">R</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Result</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,8 +136,12 @@
                     <canvas id="canvas" width="500" height="500"></canvas>
                 </div>
             </div>
-
         </main>
+
+        <footer class="footer-info">
+            <p>Lab 1 - Web Programming.</p>
+        </footer>
+        
     </body>
 
 </html>

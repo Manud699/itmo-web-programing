@@ -84,8 +84,14 @@ export class FormRendererFacade {
     #refreshCanvas(r) {
         this.#CoordinatePlaneRenderer.drawBaseGraph(r);
         const points = this.#localStoredRep.getAllPoints();
+        
         points.forEach(point => {
-            this.#CoordinatePlaneRenderer.drawPoint(point.x, point.y, point.r, point.isHit);
+
+            const currentIsHit = (r !== null && !isNaN(r)) 
+                ? this.#calculateHit(point.x, point.y, r) 
+                : point.isHit;
+
+            this.#CoordinatePlaneRenderer.drawPoint(point.x, point.y, point.r, currentIsHit);
         });
     }
 
@@ -128,7 +134,7 @@ export class FormRendererFacade {
             <td>${pointData.y}</td>
             <td>${pointData.r}</td>
             <td>${pointData.timestamp}</td>
-            <td>${pointData.isHit ? 'Попадание' : 'Промах'}
+            <td>${pointData.isHit ? 'Hit' : 'Miss'}
             `;
         tbody.appendChild(row);
     }
