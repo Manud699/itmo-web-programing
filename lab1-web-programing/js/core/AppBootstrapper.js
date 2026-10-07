@@ -4,48 +4,77 @@ import { RangeValidator } from '../validators/RangeValidator.js';
 import { LocalStorageRep } from '../repository/LocalStorageRep.js';
 import { CoordinatePlaneRenderer } from '../draw/CoordinatePlaneRenderer.js';
 import { FormRendererFacade } from '../facade/FormRendererFacade.js';
+import { AppStore } from './AppStore.js';
+import { History } from './History.js';
+import { AppRenderer } from '../view/AppRenderer.js';
 
 export class AppBootstrapper {
-    constructor() {
-        this.validator = null;
-        this.repository = null;
-        this.coordinatePlaneRenderer = null;
-        this.formRendererFacade = null;
+    #fieldValidators;
+    #formValidator;
+    #repository;
+    #store;
+    #history;
+    #renderer;
+    #controller;
+
+    boot() {
+        this.#initValidators();
+        this.#initModel();
+        this.#initView();
+        this.#initController();
+        this.#connectObservers();
+        this.#restoreOrStart();     
+        this.#controller.setupEventListeners();
     }
 
-    boot(){
-        this.initRepositories();
-        this.initValidators();
-        this.initUI();
-        this.initControllers();
-    } 
-
-    initRepositories() {
-        this.repository = new LocalStorageRep('lab1_points');
+    #initValidators() {
+        this.#fieldValidators = {
+            x: new OptionsValidator([-3, -2, -1, 0, 1, 2, 3, 4, 5]),
+            y: new RangeValidator(-5, 3),
+            r: new OptionsValidator([1, 1.5, 2, 2.5, 3])
+        };
+        const { x, y, r } = this.#fieldValidators;
+        this.#formValidator = new ValidateForm(x, y, r);
     }
 
-    initValidators() {
-        const xOptions = [-3, -2, -1, 0, 1, 2, 3, 4, 5];
-        const rOptions = [1, 1.5, 2, 2.5, 3];
-        
-        const xValidator = new OptionsValidator(xOptions);
-        const yValidator = new RangeValidator(-5, 3);
-        const rValidator = new OptionsValidator(rOptions);
-
-        this.validator = new ValidateForm(xValidator, yValidator, rValidator);
+    #initModel() {
+        this.#repository = new LocalStorageRep('lab1_history');
+        this.#store = new AppStore();
+        this.#history = new History();
     }
 
-    initUI() {
-        this.coordinatePlaneRenderer = new CoordinatePlaneRenderer('canvas');
-        this.coordinatePlaneRenderer.drawBaseGraph();
+    #initView() {
+        const plane = new CoordinatePlaneRenderer('canvas');
+        this.#renderer = new AppRenderer(plane);
     }
 
-    initControllers() {
-        this.formRendererFacade = new FormRendererFacade(
-            this.validator,
-            this.repository,
-            this.coordinatePlaneRenderer
+    #initController() {
+        this.#controller = new FormRendererFacade(
+            this.#store,
+            this.#history,
+            this.#formValidator,
+            this.#fieldValidators
         );
-        this.formRendererFacade.setupEventListeners();
+    }
+
+    #connectObservers() {
+        this.#store.subscribe(state => this.#renderer.render(state));
+
+        this.#history.subscribe(entries => {
+            this.#renderer.renderLog(entries, id => this.#controller.restore(id));
+            this.#repository.save(this.#history);
+        });
+    }
+
+    #restoreOrStart() {
+        this.#history.load(this.#repository.load());
+        const current = this.#history.current();
+
+        if (current) {
+            this.#store.restoreMemento(current.memento);
+        } else {
+            this.#history.record('INIT', null, null, this.#store.createMemento());
+            this.#renderer.render(this.#store.getState());
+        }
     }
 }
