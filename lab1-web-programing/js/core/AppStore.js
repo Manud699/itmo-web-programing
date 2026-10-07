@@ -1,0 +1,60 @@
+// Unica fuente de la 'verdad'
+
+import { Observable } from "./Observable";
+import { takeSnapshot } from "./snapshot";
+
+
+export function createInitialsState() {
+    return {
+        form: {x:null, y:'', r:null }, 
+        points: []
+    }
+}
+
+
+export class AppStore extends Observable {
+    #state;
+
+    constructor(initialState = createInitialsState()){
+        super(); 
+        this.#state = structuredClone(initialState);
+    }
+
+    getState(){
+        return structuredClone(this.#state);
+    }
+
+
+    setX(x) { return this.#set('x', x); }
+    setY(y) { return this.#set('y', y); }
+    setR(r) { return this.#set('r', r); }
+
+    addPoint(point){
+        this.#state.points.push(point);
+        this.notify(this.getState());
+    } 
+    
+    clearPoints(){
+        const old = this.#state.points.length;
+        this.#state.points = []; 
+        this.notify(this.getState);
+        return old; 
+    } 
+
+    createMemento(){
+        return takeSnapshot(this.#state);
+    }
+
+    restoreMemento(memento){
+        this.#state = structuredClone(memento);
+        this.notify(this.#state);
+    }
+
+    #set(field, value){
+        const old = this.#state.form[field]; 
+        this.#state.form[field] = value; 
+        this.notify(this.getState());
+        return old;
+    }
+
+} 
