@@ -60,8 +60,11 @@ export class AppBootstrapper {
     #connectObservers() {
         this.#store.subscribe(state => this.#renderer.render(state));
 
-        this.#history.subscribe(entries => {
-            this.#renderer.renderLog(entries, id => this.#controller.restore(id));
+        this.#history.subscribe(view => {
+            this.#renderer.renderLog(view, {
+                onRestore: id => this.#controller.restore(id),
+                onRestoreBranch: (branchId, id) => this.#controller.restoreFromBranch(branchId, id)
+            });
             this.#repository.save(this.#history);
         });
     }

@@ -261,7 +261,8 @@ button[type="submit"]:active {
     transform: scale(0.98);
 }
 
-#clear-btn {
+#clear-btn,
+.ghost-btn {
     background-color: transparent;
     color: var(--ponk-accent);
     border: 1px solid var(--border-color);
@@ -279,7 +280,8 @@ button[type="submit"]:active {
     gap: 0.4rem;
 }
 
-#clear-btn:hover {
+#clear-btn:hover,
+.ghost-btn:hover {
     border-color: var(--ponk-accent);
     background-color: var(--ponk-soft);
 }
@@ -364,42 +366,42 @@ button[type="submit"]:active {
     background-color: rgba(255, 255, 255, 0.03);
 }
 
-#table-log th,
-#table-log td {
+.log-table th,
+.log-table td {
     padding: 0.5rem 0.55rem;
 }
 
-#table-log td:nth-child(1) {
+.log-table td:nth-child(1) {
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
 }
 
-#table-log td:nth-child(2) {
+.log-table td:nth-child(2) {
     font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
     font-size: 0.8rem;
 }
 
-#table-log td:nth-child(5) {
+.log-table td:nth-child(5) {
     white-space: normal;
     min-width: 7rem;
 }
 
-#table-log tr.current {
+.log-table tr.current {
     background-color: var(--ponk-soft);
     font-weight: 600;
     box-shadow: inset 3px 0 0 var(--ponk-accent);
 }
 
-#table-log tr.pending {
+.log-table tr.pending {
     opacity: 0.5;
     font-style: italic;
 }
 
-#table-log tr.pending td:nth-child(1)::after {
+.log-table tr.pending td:nth-child(1)::after {
     content: " ↷";
 }
 
-#table-log button {
+.log-table button {
     background: transparent;
     color: var(--ponk-accent);
     border: 1px solid var(--border-color);
@@ -410,15 +412,66 @@ button[type="submit"]:active {
     transition: border-color 0.2s, background-color 0.2s;
 }
 
-#table-log button:hover:not(:disabled) {
+.log-table button:hover:not(:disabled) {
     border-color: var(--ponk-accent);
     background-color: var(--ponk-soft);
 }
 
-#table-log button:disabled {
+.log-table button:disabled {
     color: var(--text-muted);
     cursor: default;
     opacity: 0.6;
+}
+
+/* ACTION LOG: HINT AND DISCARDED BRANCHES */
+.log-hint {
+    margin: -0.4rem 0 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.log-hint kbd {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.7rem;
+    padding: 0.05rem 0.3rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.branches {
+    flex: 0 0 auto;
+    margin-top: 0.9rem;
+}
+
+.branches summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.branches summary:hover {
+    color: var(--ponk-accent);
+}
+
+#branches-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-height: 14rem;
+    overflow: auto;
+    margin-top: 0.6rem;
+}
+
+.branch {
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+}
+
+.branch-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
 }
 
 .canvas-card {

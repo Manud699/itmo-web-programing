@@ -26,16 +26,37 @@ export class FormRendererFacade {
             .addEventListener('submit', e => this.#handleFormSubmit(e));
         document.getElementById('clear-btn')
             ?.addEventListener('click', () => this.#handleClear());
+        document.getElementById('clear-history-btn')
+            ?.addEventListener('click', () => this.#handleClearHistory());
 
-        //document.addEventListener('keydown', e => { ... this.restore(id) ... });
+        document.addEventListener('keydown', e => this.#handleShortcut(e));
     }
 
     restore(id) {
-        const memento = this.#history.restore(id);
+        this.#applyMemento(this.#history.restore(id));
+    }
+
+    restoreFromBranch(branchId, entryId) {
+        this.#applyMemento(this.#history.restoreFromBranch(branchId, entryId));
+    }
+
+    #applyMemento(memento) {
         if (!memento) return;
-        this.#invalidFields.clear();              
+        this.#invalidFields.clear();
         ['x', 'y', 'r'].forEach(f => this.#clearError(f));
         this.#store.restoreMemento(memento);
+    }
+
+    #handleShortcut(e) {
+        if (!(e.ctrlKey || e.metaKey)) return;
+        const isUndo = e.code === 'KeyZ' && !e.shiftKey;
+        const isRedo = (e.code === 'KeyZ' && e.shiftKey) || e.code === 'KeyY';
+        if (!isUndo && !isRedo) return;
+    
+        if (e.target instanceof HTMLInputElement && e.target.type === 'text') return;
+
+        e.preventDefault();
+        this.#applyMemento(isUndo ? this.#history.undo() : this.#history.redo());
     }
 
     #handleFieldChange(field, raw) {
@@ -80,6 +101,11 @@ export class FormRendererFacade {
     #handleClear() {
         const old = this.#store.clearPoints();
         this.#history.record('CLEAR_POINTS', old, 0, this.#store.createMemento());
+    }
+
+    #handleClearHistory() {
+        if (!confirm('Clear the whole action log? The current state is kept.')) return;
+        this.#history.clearHistory(this.#store.createMemento());
     }
 
     #clearError(field) {

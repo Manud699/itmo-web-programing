@@ -139,10 +139,12 @@
                 <section class="card log-section">
                     <div class="section-head">
                         <h2>Action log</h2>
+                        <button id="clear-history-btn" class="ghost-btn" type="button">clear log</button>
                     </div>
+                    <p class="log-hint"><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> redo</p>
 
                     <div class="table-wrap log-wrap">
-                        <table id="table-log" class="data-table">
+                        <table id="table-log" class="data-table log-table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -156,6 +158,11 @@
                             <tbody></tbody>
                         </table>
                     </div>
+
+                    <details id="branches" class="branches hidden">
+                        <summary>Discarded branches (<span id="branches-count">0</span>)</summary>
+                        <div id="branches-list"></div>
+                    </details>
                 </section>
             </div>
         </main>
